@@ -45,6 +45,37 @@ int main(int argc, char *argv[]){
 
     while((bytes_read = read(src_fd, buf, BUF_SIZE)) > 0){
         char *buf_ptr = buf;
-        
+        while (bytes_read > 0){
+            bytes_written = write(dest_fd, buf_ptr, bytes_read);
+            if(bytes_written == -1){
+                fprintf(stderr, "Error writing to destination file: %s\n", strerror(errno));
+                close(src_fd);
+                close(dest_fd);
+                return EXIT_FAILURE;
+            }
+            bytes_read -= bytes_written;
+            buf_ptr += bytes_written;
+            total_bytes += bytes_written;
     }
+}
+
+    if(bytes_read == -1){
+        fprintf(stderr, "Error reading from source file: %s\n", strerror(errno));
+        close(src_fd);
+        close(dest_fd);
+        return EXIT_FAILURE;
+    }
+
+    close(src_fd);
+    close(dest_fd);
+
+    gettimeofday(&end, NULL);
+    double time_taken = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+
+
+    printf("Unbuffered copy completed\n");
+    printf("Total bytes copied: %zu\n", total_bytes);
+    printf("Time taken: %.6f seconds\n", time_taken);
+    
+    return 0;
 }
