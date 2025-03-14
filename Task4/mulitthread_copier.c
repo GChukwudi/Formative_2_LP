@@ -10,6 +10,7 @@
 
 #define BUFFER_SIZE 8192
 
+// Data structure to pass arguments to the thread
 typedef struct {
     int thread_id;
     const char *src;
@@ -18,6 +19,7 @@ typedef struct {
     size_t chunk_size;
 } ThreadData;
 
+// Function to copy a chunk of the file
 void *copy_chunk(void *arg) {
     ThreadData *data = (ThreadData *)arg;
     char *buffer;
